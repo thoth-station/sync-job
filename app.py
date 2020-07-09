@@ -25,8 +25,8 @@ from thoth.common import init_logging
 from thoth.storages import GraphDatabase
 from thoth.storages import __version__ as __thoth_storages_version__
 
-__component_version__ = "0.0.0"
-__version__ = f"{__component_version__}+{__thoth_storages_version__}"
+__version__ = "0.0.0"
+__component_version__ = f"{__version__}+{__thoth_storages_version__}"
 
 init_logging()
 _LOGGER = logging.getLogger("thoth.sync")
@@ -42,7 +42,7 @@ def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
         _LOGGER.setLevel(logging.DEBUG)
         _LOGGER.debug("Debug mode is on.")
 
-    _LOGGER.info("Running syncing job in version %r", __version__)
+    _LOGGER.info("Running syncing job in version %r", __component_version__)
 
     graph = GraphDatabase()
     graph.connect()
