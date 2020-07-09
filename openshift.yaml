@@ -116,6 +116,16 @@ objects:
                     configMapKeyRef:
                       key: storage-bucket-name
                       name: thoth
+                - name: THOTH_CEPH_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: thoth
+                      key: key-id
+                - name: THOTH_CEPH_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: thoth
+                      key: secret-key
                 - name: SENTRY_DSN
                   valueFrom:
                     secretKeyRef:
