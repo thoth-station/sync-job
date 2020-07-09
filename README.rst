@@ -24,4 +24,3 @@ Cleaning objects
 .. code-block:: console
 
   oc delete job -l component=sync
-
