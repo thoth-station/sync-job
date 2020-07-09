@@ -48,11 +48,18 @@ parameters:
     description: Run the syncing logic in debug mode.
     value: "0"
 
+  - name: THOTH_SYNC_IDENTIFIER
+    required: true
+    displayName: Identifier
+    description: Job identifier
+    generate: expression
+    from: "[a-z0-9]{6}"
+
 objects:
   - apiVersion: batch/v1
     kind: Job
     metadata:
-      generateName: sync-
+      name: "sync-${THOTH_SYNC_IDENTIFIER}"
       annotations:
         thoth-station.ninja/template-version: 0.1.0
       labels:
