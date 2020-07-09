@@ -22,7 +22,7 @@ parameters:
     required: true
     description: Number of seconds allocated for the job to finish.
     displayName: Deadline seconds
-    value: 21600
+    value: "21600"
 
   - name: IMAGE_VERSION
     required: true
