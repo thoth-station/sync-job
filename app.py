@@ -53,7 +53,7 @@ def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
     stats = sync_solver_documents(force=force_sync, graceful=graceful, graph=graph)
 
     _LOGGER.info(
-        "Syncing triggered by %r function completed with "
+        "Syncing triggered by sync_solver_documents function completed with "
         "%d processed, %d synced, %d skipped and %d failed documents",
         *stats,
     )
@@ -72,6 +72,7 @@ def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
         _LOGGER.info(
             "Syncing triggered by %r function completed with "
             "%d processed, %d synced, %d skipped and %d failed documents",
+            obj_name,
             *stats,
         )
 
