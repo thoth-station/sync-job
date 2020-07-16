@@ -21,6 +21,7 @@ import logging
 
 import click
 import thoth.storages.sync as thoth_sync_module
+from thoth.storages.sync import sync_solver_documents
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
 from thoth.storages import __version__ as __thoth_storages_version__
@@ -47,9 +48,23 @@ def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
     graph = GraphDatabase()
     graph.connect()
 
+    # First we need to sync solvers
+
+    stats = sync_solver_documents(force=force_sync, graceful=graceful, graph=graph)
+
+    _LOGGER.info(
+        "Syncing triggered by %r function completed with "
+        "%d processed, %d synced, %d skipped and %d failed documents",
+        *stats,
+    )
+
     for obj_name, function in thoth_sync_module.__dict__.items():
         if not obj_name.startswith("sync_"):
             _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: not a syncing function", obj_name)
+            continue
+
+        if not obj_name.startswith("sync_solver"):
+            _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: solver already synced", obj_name)
             continue
 
         stats = function(force=force_sync, graceful=graceful, graph=graph)
