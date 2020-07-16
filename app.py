@@ -63,7 +63,7 @@ def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
             _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: not a syncing function", obj_name)
             continue
 
-        if not obj_name.startswith("sync_solver"):
+        if obj_name == "sync_solver_documents":
             _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: solver already synced", obj_name)
             continue
 
