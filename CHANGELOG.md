@@ -14,3 +14,6 @@
 * Job does not support generateName use OpenShift template to generate one
 * Fix OpenShift template parameter handling
 * Make pre-commit happy (#7)
+
+## Release 0.1.2 (2020-07-20T09:35:16)
+* Update dependencies for test
