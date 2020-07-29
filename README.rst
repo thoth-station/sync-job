@@ -11,7 +11,6 @@ Running the job
 .. code-block:: console
 
   oc process \
-    -p DEADLINE_SECONDS="21600"
     -p IMAGE_VERSION="latest" \
     -p THOTH_SYNC_FORCE="0" \
     -p THOTH_SYNC_GRACEFUL="0" \
