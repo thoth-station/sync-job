@@ -23,7 +23,7 @@ from typing import Optional
 
 import click
 import thoth.storages.sync as thoth_sync_module
-from thoth.storages.sync import _HANDLERS_MAPPING
+from thoth.storages.sync import HANDLERS_MAPPING
 from thoth.storages.sync import sync_solver_documents
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
@@ -44,7 +44,7 @@ _LOGGER = logging.getLogger("thoth.sync")
     "--document-type",
     help="Thoth document type to be synced.",
     envvar="THOTH_DOCUMENT_TYPE",
-    type=click.Choice(list(_HANDLERS_MAPPING.keys()), case_sensitive=False),
+    type=click.Choice(list(HANDLERS_MAPPING.keys()), case_sensitive=False),
 )
 def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[str]) -> None:
     """Sync Thoth data to Thoth's knowledge base."""
@@ -58,13 +58,13 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
     graph.connect()
 
     if document_type:
-        if document_type not in _HANDLERS_MAPPING:
+        if document_type not in HANDLERS_MAPPING:
             raise Exception(
-                f"document name {document_type} is not part of Thoth document types {_HANDLERS_MAPPING.keys()}"
+                f"document name {document_type} is not part of Thoth document types {HANDLERS_MAPPING.keys()}"
             )
 
         # We sync only a specific category of Thoth documents
-        function = _HANDLERS_MAPPING[document_type]
+        function = HANDLERS_MAPPING[document_type]
         function(force=force_sync, graceful=graceful, graph=graph)
 
         return
