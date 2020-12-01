@@ -40,7 +40,12 @@ _LOGGER = logging.getLogger("thoth.sync")
 @click.option("--force-sync", is_flag=True, help="Perform force sync of documents.", envvar="THOTH_SYNC_FORCE_SYNC")
 @click.option("--graceful", is_flag=True, help="Continue on any error during the sync.", envvar="THOTH_SYNC_GRACEFUL")
 @click.option("--debug", is_flag=True, help="Run in a debug mode", envvar="THOTH_SYNC_DEBUG")
-@click.option("--document-type", help="thoth document type", envvar="THOTH_DOCUMENT_TYPE")
+@click.option(
+    "--document-type",
+    help="Thoth document type to be synced.",
+    envvar="THOTH_DOCUMENT_TYPE",
+    type=click.Choice(list(_HANDLERS_MAPPING.keys()), case_sensitive=False),
+)
 def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[str]) -> None:
     """Sync Thoth data to Thoth's knowledge base."""
     if debug:
@@ -54,7 +59,9 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
 
     if document_type:
         if document_type not in _HANDLERS_MAPPING:
-            raise Exception(f"document name {document_type} is not part of Thoth document types {_HANDLERS_MAPPING.keys()}")
+            raise Exception(
+                f"document name {document_type} is not part of Thoth document types {_HANDLERS_MAPPING.keys()}"
+            )
 
         # We sync only a specific category of Thoth documents
         function = _HANDLERS_MAPPING[document_type]
