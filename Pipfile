@@ -4,6 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+pytest-timeout = "*"
+pytest-cov = "*"
+hypothesis-auto = "*"
+hypothesis = "*"
+pytest-mypy = "*"
+mypy = "*"
+pre-commit = "==2.0.1"
 
 [packages]
 thoth-storages = "*"
