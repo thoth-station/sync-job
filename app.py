@@ -58,11 +58,6 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
     graph.connect()
 
     if document_type:
-        if document_type not in HANDLERS_MAPPING:
-            raise Exception(
-                f"document name {document_type} is not part of Thoth document types {HANDLERS_MAPPING.keys()}"
-            )
-
         # We sync only a specific category of Thoth documents
         function = HANDLERS_MAPPING[document_type]
         function(force=force_sync, graceful=graceful, graph=graph)
