@@ -19,8 +19,11 @@
 
 import logging
 
+from typing import Optional
+
 import click
 import thoth.storages.sync as thoth_sync_module
+from thoth.storages.sync import HANDLERS_MAPPING
 from thoth.storages.sync import sync_solver_documents
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
@@ -37,7 +40,13 @@ _LOGGER = logging.getLogger("thoth.sync")
 @click.option("--force-sync", is_flag=True, help="Perform force sync of documents.", envvar="THOTH_SYNC_FORCE_SYNC")
 @click.option("--graceful", is_flag=True, help="Continue on any error during the sync.", envvar="THOTH_SYNC_GRACEFUL")
 @click.option("--debug", is_flag=True, help="Run in a debug mode", envvar="THOTH_SYNC_DEBUG")
-def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
+@click.option(
+    "--document-type",
+    help="Thoth document type to be synced.",
+    envvar="THOTH_DOCUMENT_TYPE",
+    type=click.Choice(list(HANDLERS_MAPPING.keys()), case_sensitive=False),
+)
+def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[str]) -> None:
     """Sync Thoth data to Thoth's knowledge base."""
     if debug:
         _LOGGER.setLevel(logging.DEBUG)
@@ -48,7 +57,14 @@ def sync(force_sync: bool, graceful: bool, debug: bool) -> None:
     graph = GraphDatabase()
     graph.connect()
 
-    # First we need to sync solvers
+    if document_type:
+        # We sync only a specific category of Thoth documents
+        function = HANDLERS_MAPPING[document_type]
+        function(force=force_sync, graceful=graceful, graph=graph)
+
+        return
+
+    # First we need tosync solvers
 
     stats = sync_solver_documents(force=force_sync, graceful=graceful, graph=graph)
 
