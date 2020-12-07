@@ -49,6 +49,11 @@ parameters:
     generate: expression
     from: "[a-z0-9]{6}"
 
+  - name: THOTH_SYNC_DOCUMENT
+    required: false
+    displayName: document type to be synced
+    description: Document Type identifier
+
 objects:
   - apiVersion: batch/v1
     kind: Job
@@ -71,7 +76,7 @@ objects:
           automountServiceAccountToken: false
           containers:
             - name: sync
-              image: "quay.io/thoth-station/sync:${IMAGE_VERSION}"
+              image: "quay.io/thoth-station/sync-job:${IMAGE_VERSION}"
               env:
                 - name: THOTH_SYNC_FORCE
                   value: "${THOTH_SYNC_FORCE}"
@@ -79,6 +84,8 @@ objects:
                   value: "${THOTH_SYNC_GRACEFUL}"
                 - name: THOTH_SYNC_DEBUG
                   value: "${THOTH_SYNC_DEBUG}"
+                - name: THOTH_SYNC_DOCUMENT
+                  value: "${THOTH_SYNC_DOCUMENT}"
                 - name: THOTH_DEPLOYMENT_NAME
                   valueFrom:
                     configMapKeyRef:
