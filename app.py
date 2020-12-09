@@ -60,8 +60,14 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
     if document_type:
         # We sync only a specific category of Thoth documents
         function = HANDLERS_MAPPING[document_type]
-        function(force=force_sync, graceful=graceful, graph=graph)
+        stats = function(force=force_sync, graceful=graceful, graph=graph)
 
+        _LOGGER.info(
+            "Syncing triggered for %r function completed with "
+            "%d processed, %d synced, %d skipped and %d failed documents",
+            document_type,
+            *stats,
+        )
         return
 
     # First we need tosync solvers
