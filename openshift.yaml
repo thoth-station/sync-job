@@ -49,7 +49,7 @@ parameters:
     generate: expression
     from: "[a-z0-9]{6}"
 
-  - name: THOTH_SYNC_DOCUMENT
+  - name: THOTH_DOCUMENT_TYPE
     required: false
     displayName: document type to be synced
     description: Document Type identifier
@@ -84,8 +84,8 @@ objects:
                   value: "${THOTH_SYNC_GRACEFUL}"
                 - name: THOTH_SYNC_DEBUG
                   value: "${THOTH_SYNC_DEBUG}"
-                - name: THOTH_SYNC_DOCUMENT
-                  value: "${THOTH_SYNC_DOCUMENT}"
+                - name: THOTH_DOCUMENT_TYPE
+                  value: "${THOTH_DOCUMENT_TYPE}"
                 - name: THOTH_DEPLOYMENT_NAME
                   valueFrom:
                     configMapKeyRef:
@@ -114,12 +114,12 @@ objects:
                 - name: THOTH_CEPH_KEY_ID
                   valueFrom:
                     secretKeyRef:
-                      name: thoth
+                      name: ceph
                       key: key-id
                 - name: THOTH_CEPH_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: thoth
+                      name: ceph
                       key: secret-key
                 - name: SENTRY_DSN
                   valueFrom:
