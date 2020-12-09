@@ -29,7 +29,7 @@ from thoth.common import init_logging
 from thoth.storages import GraphDatabase
 from thoth.storages import __version__ as __thoth_storages_version__
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __component_version__ = f"{__version__}+ storages{__thoth_storages_version__}"
 
 init_logging()
