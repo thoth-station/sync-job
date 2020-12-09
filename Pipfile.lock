@@ -952,7 +952,7 @@
                 "sha256:cedb2f9e1f990918ea061f28a0f0077a07702e3819602d3507e2ff98c8d20636",
                 "sha256:e8caf961e1b1a945db76f1b5fa9c91498d15f545ac0ababbe575cfab185d3bd8"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==5.3"
         },
         "distlib": {
@@ -971,11 +971,11 @@
         },
         "hypothesis": {
             "hashes": [
-                "sha256:2973b4154962ac716c6c4265f52a7f66c2ecfdd2c7bdc862f0012b4e360f22b3",
-                "sha256:e4a4057032f1408fec0350a42e2744084c28954451c3fa1b685704005efcd789"
+                "sha256:527856333885dbaa656b33d282c1fabfce7e27a2c36ced16d93cd81b815bed53",
+                "sha256:657bc397f82a59afb716fecc00d16e7b0688b3eb575561bb0ae7074377ee0bff"
             ],
             "index": "pypi",
-            "version": "==5.42.2"
+            "version": "==5.42.3"
         },
         "hypothesis-auto": {
             "hashes": [
