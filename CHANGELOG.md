@@ -34,3 +34,10 @@
 * Add logs (#36)
 * :arrow_up: Automatic update of dependencies by kebechet. (#34)
 * Update template (#33)
+
+## Release 0.2.2 (2021-02-19T21:02:14)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#45)
+* kebechet issue templates for ease trigger
+### Improvements
+* Use correct and env and config file (#42)
