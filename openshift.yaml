@@ -78,6 +78,8 @@ objects:
             - name: sync
               image: "quay.io/thoth-station/sync-job:${IMAGE_VERSION}"
               env:
+                - name: THOTH_LOG_SYNC
+                  value: "INFO"
                 - name: THOTH_SYNC_FORCE
                   value: "${THOTH_SYNC_FORCE}"
                 - name: THOTH_SYNC_GRACEFUL
@@ -152,8 +154,8 @@ objects:
                       key: database-name
               resources:
                 limits:
-                  memory: "1Gi"
-                  cpu: 1
+                  memory: "2Gi"
+                  cpu: 4
                 requests:
-                  memory: "1Gi"
-                  cpu: 1
+                  memory: "2Gi"
+                  cpu: 4
