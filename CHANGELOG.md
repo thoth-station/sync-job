@@ -41,3 +41,7 @@
 * kebechet issue templates for ease trigger
 ### Improvements
 * Use correct and env and config file (#42)
+
+## Release 0.2.3 (2021-04-29T05:11:03)
+### Features
+* :robot: update the resource limit for the sync-job
