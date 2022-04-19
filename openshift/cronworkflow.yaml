@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: sync-job-cw
+spec:
+  schedule: "0 10 14 * *"
+  timezone: "Etc/UTC"
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: sync-job-wt
+    templates:
+      container:
+        image: quay.io/thoth-station/sync-job:v0.2.3-dev
+        command: ["oc", "process"]
+        args: ["-p IMAGE_VERSION='v0.2.3-dev'", "-p THOTH_SYNC_FORCE='0'", "-p THOTH_SYNC_GRACEFUL='0'", "-p THOTH_SYNC_DEBUG='0'", "-f openshift.yaml", " | oc apply -f -"]
