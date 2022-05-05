@@ -1,4 +1,18 @@
 
+## Release 0.2.4 (2022-05-05T18:23:18)
+* 05b22de :ship: Bump up base image initialized in CI.
+* 3bb9b59 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 3cdcf61 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 840af09 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* db2e75e Update pre-commit base image and remove check from aicoe file
+* 73a3c8e :ship: Bump up base image initialized in CI.
+* a4afc4f Update pre-commit config
+* 61f5d27 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* be6f552 Update pyproject.toml to use Python 3.8
+* bdcaf88 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 7b1d9dd :arrow_up: Automatic update of dependencies by Kebechet (#52)
+* 72f1f17 :hatched_chick: update the prow resource limits (#51)
+
 ## Release 0.1.0 (2020-07-09T09:03:54)
 * Fix version identifier handling (#4)
 * Use Python 3.6
