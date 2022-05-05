@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: sync-job
+spec:
+  entrypoint: SyncDocuments
+  arguments:
+    parameters:
+    - name: THOTH_SYNC_FORCE
+    - name: THOTH_SYNC_GRACEFUL
+    - name: THOTH_SYNC_DEBUG
+    - name: THOTH_DOCUMENT_TYPE
+  templates:
+  - name: SyncDocuments
+    steps:
+    - - name: SyncDocuments
+        templateRef:
+          name: sync-job-wt
+          template: SyncDocumentType
+        arguments:
+          parameters:
+            - name: THOTH_SYNC_FORCE
+              value: "{{workflow.parameters.THOTH_DOCUMENT_TYPE}}"
+            - name: THOTH_SYNC_GRACEFUL
+              value: "{{workflow.parameters.THOTH_SYNC_GRACEFUL}}"
+            - name: THOTH_SYNC_DEBUG
+              value: "{{workflow.parameters.THOTH_SYNC_DEBUG}}"
+            - name: THOTH_DOCUMENT_TYPE
+              value: "{{workflow.parameters.THOTH_DOCUMENT_TYPE}}"

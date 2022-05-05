@@ -15,7 +15,7 @@ Running the job
     -p THOTH_SYNC_FORCE="0" \
     -p THOTH_SYNC_GRACEFUL="0" \
     -p THOTH_SYNC_DEBUG="0" \
-  -f openshift.yaml | oc apply -f -
+  -f openshift/job-template.yaml | oc apply -f -
 
 Cleaning objects
 ================
