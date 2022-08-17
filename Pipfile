@@ -17,6 +17,7 @@ pre-commit = "==2.0.1"
 thoth-storages = "*"
 click = "*"
 thoth-common = "*"
+prometheus-client = "*"
 
 [requires]
 python_version = "3.8"

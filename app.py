@@ -18,6 +18,7 @@
 """Sync Thoth documents to Thoth's knowledge graph."""
 
 import logging
+import os
 
 from typing import Optional
 
@@ -28,11 +29,34 @@ from thoth.common import init_logging
 from thoth.storages import GraphDatabase
 from thoth.storages import __version__ as __thoth_storages_version__
 
+from prometheus_client import CollectorRegistry, Gauge, Counter, push_to_gateway
+
+prometheus_registry = CollectorRegistry()
+
 __version__ = "0.2.5"
 __component_version__ = f"{__version__}+ storages{__thoth_storages_version__}"
 
 init_logging()
 _LOGGER = logging.getLogger("thoth.sync")
+
+# Metrics Data sync
+_METRIC_INFO = Gauge(
+    "thoth_data_sync_job_info",
+    "Thoth Data Sync Job information",
+    ["env", "version"],
+    registry=prometheus_registry,
+)
+
+_METRIC_DOCUMENTS_SYNC_NUMBER = Counter(
+    "thoth_data_sync_job",
+    "Thoth Data Sync Job number of synced data per status",
+    ["sync_type", "env", "version", "document_type"],
+    registry=prometheus_registry,
+)
+
+_THOTH_DEPLOYMENT_NAME = os.environ["THOTH_DEPLOYMENT_NAME"]
+_THOTH_METRICS_PUSHGATEWAY_URL = os.getenv("PROMETHEUS_PUSHGATEWAY_URL")
+_METRIC_INFO.labels(_THOTH_DEPLOYMENT_NAME, __component_version__).inc()
 
 
 @click.command()
@@ -75,6 +99,18 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
             "%d processed, %d synced, %d skipped and %d failed documents",
             obj_name,
             *stats,
+        )
+        for amount, result in zip(stats[1:], ["synced", "skipped", "failed"]):
+            _METRIC_DOCUMENTS_SYNC_NUMBER.labels(
+                sync_type=result, env=_THOTH_DEPLOYMENT_NAME, version=__component_version__, document_type=obj_name
+            ).inc(amount)
+
+    if _THOTH_METRICS_PUSHGATEWAY_URL:
+        _LOGGER.debug(f"Submitting metrics to Prometheus pushgateway {_THOTH_METRICS_PUSHGATEWAY_URL}")
+        push_to_gateway(
+            _THOTH_METRICS_PUSHGATEWAY_URL,
+            job="document-sync-job",
+            registry=prometheus_registry,
         )
 
 
