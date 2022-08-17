@@ -24,7 +24,6 @@ from typing import Optional
 import click
 import thoth.storages.sync as thoth_sync_module
 from thoth.storages.sync import HANDLERS_MAPPING
-from thoth.storages.sync import sync_solver_documents
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
 from thoth.storages import __version__ as __thoth_storages_version__
@@ -60,33 +59,13 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
     if document_type:
         # We sync only a specific category of Thoth documents
         function = HANDLERS_MAPPING[document_type]
-        stats = function(force=force_sync, graceful=graceful, graph=graph)
+        to_sync = [(document_type, function)]
+    else:
+        to_sync = thoth_sync_module.__dict__.items()
 
-        _LOGGER.info(
-            "Syncing triggered for %r function completed with "
-            "%d processed, %d synced, %d skipped and %d failed documents",
-            document_type,
-            *stats,
-        )
-        return
-
-    # First we need tosync solvers
-
-    stats = sync_solver_documents(force=force_sync, graceful=graceful, graph=graph)
-
-    _LOGGER.info(
-        "Syncing triggered by sync_solver_documents function completed with "
-        "%d processed, %d synced, %d skipped and %d failed documents",
-        *stats,
-    )
-
-    for obj_name, function in thoth_sync_module.__dict__.items():
+    for obj_name, function in to_sync:
         if not obj_name.startswith("sync_"):
             _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: not a syncing function", obj_name)
-            continue
-
-        if obj_name == "sync_solver_documents":
-            _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: solver already synced", obj_name)
             continue
 
         stats = function(force=force_sync, graceful=graceful, graph=graph)
