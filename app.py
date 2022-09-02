@@ -23,7 +23,6 @@ import os
 from typing import Optional
 
 import click
-import thoth.storages.sync as thoth_sync_module
 from thoth.storages.sync import HANDLERS_MAPPING
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
@@ -81,28 +80,23 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
     graph.connect()
 
     if document_type:
-        # We sync only a specific category of Thoth documents
-        function = HANDLERS_MAPPING[document_type]
-        to_sync = [(document_type, function)]
+        to_sync = {document_type: HANDLERS_MAPPING[document_type]}
     else:
-        to_sync = thoth_sync_module.__dict__.items()
+        to_sync = HANDLERS_MAPPING
 
-    for obj_name, function in to_sync:
-        if not obj_name.startswith("sync_"):
-            _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: not a syncing function", obj_name)
-            continue
+    for category, function in to_sync.items():
 
         stats = function(force=force_sync, graceful=graceful, graph=graph)
 
         _LOGGER.info(
-            "Syncing triggered by %r function completed with "
+            "Syncing triggered for %r documents completed with "
             "%d processed, %d synced, %d skipped and %d failed documents",
-            obj_name,
+            category,
             *stats,
         )
         for amount, result in zip(stats[1:], ["synced", "skipped", "failed"]):
             _METRIC_DOCUMENTS_SYNC_NUMBER.labels(
-                sync_type=result, env=_THOTH_DEPLOYMENT_NAME, version=__component_version__, document_type=obj_name
+                sync_type=result, env=_THOTH_DEPLOYMENT_NAME, version=__component_version__, document_type=category
             ).inc(amount)
 
     if _THOTH_METRICS_PUSHGATEWAY_URL:
