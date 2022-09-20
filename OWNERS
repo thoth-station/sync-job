@@ -2,8 +2,13 @@
 
 approvers:
   - goern
-  - fridex
-reviewers:
-  - pacospace
   - harshad16
-  - kpostoffice
+  - vannten
+  - sesheta
+
+reviewers:
+  - harshad16
+  - vannten
+
+emeritus_approvers:
+  - fridex
