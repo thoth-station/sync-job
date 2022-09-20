@@ -18,22 +18,44 @@
 """Sync Thoth documents to Thoth's knowledge graph."""
 
 import logging
+import os
 
 from typing import Optional
 
 import click
-import thoth.storages.sync as thoth_sync_module
 from thoth.storages.sync import HANDLERS_MAPPING
-from thoth.storages.sync import sync_solver_documents
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
 from thoth.storages import __version__ as __thoth_storages_version__
+
+from prometheus_client import CollectorRegistry, Gauge, Counter, push_to_gateway
+
+prometheus_registry = CollectorRegistry()
 
 __version__ = "0.2.5"
 __component_version__ = f"{__version__}+ storages{__thoth_storages_version__}"
 
 init_logging()
 _LOGGER = logging.getLogger("thoth.sync")
+
+# Metrics Data sync
+_METRIC_INFO = Gauge(
+    "thoth_data_sync_job_info",
+    "Thoth Data Sync Job information",
+    ["env", "version"],
+    registry=prometheus_registry,
+)
+
+_METRIC_DOCUMENTS_SYNC_NUMBER = Counter(
+    "thoth_data_sync_job",
+    "Thoth Data Sync Job number of synced data per status",
+    ["sync_type", "env", "version", "document_type"],
+    registry=prometheus_registry,
+)
+
+_THOTH_DEPLOYMENT_NAME = os.environ["THOTH_DEPLOYMENT_NAME"]
+_THOTH_METRICS_PUSHGATEWAY_URL = os.getenv("PROMETHEUS_PUSHGATEWAY_URL")
+_METRIC_INFO.labels(_THOTH_DEPLOYMENT_NAME, __component_version__).inc()
 
 
 @click.command()
@@ -58,44 +80,31 @@ def sync(force_sync: bool, graceful: bool, debug: bool, document_type: Optional[
     graph.connect()
 
     if document_type:
-        # We sync only a specific category of Thoth documents
-        function = HANDLERS_MAPPING[document_type]
+        to_sync = {document_type: HANDLERS_MAPPING[document_type]}
+    else:
+        to_sync = HANDLERS_MAPPING
+
+    for category, function in to_sync.items():
+
         stats = function(force=force_sync, graceful=graceful, graph=graph)
 
         _LOGGER.info(
-            "Syncing triggered for %r function completed with "
+            "Syncing triggered for %r documents completed with "
             "%d processed, %d synced, %d skipped and %d failed documents",
-            document_type,
+            category,
             *stats,
         )
-        return
+        for amount, result in zip(stats[1:], ["synced", "skipped", "failed"]):
+            _METRIC_DOCUMENTS_SYNC_NUMBER.labels(
+                sync_type=result, env=_THOTH_DEPLOYMENT_NAME, version=__component_version__, document_type=category
+            ).inc(amount)
 
-    # First we need tosync solvers
-
-    stats = sync_solver_documents(force=force_sync, graceful=graceful, graph=graph)
-
-    _LOGGER.info(
-        "Syncing triggered by sync_solver_documents function completed with "
-        "%d processed, %d synced, %d skipped and %d failed documents",
-        *stats,
-    )
-
-    for obj_name, function in thoth_sync_module.__dict__.items():
-        if not obj_name.startswith("sync_"):
-            _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: not a syncing function", obj_name)
-            continue
-
-        if obj_name == "sync_solver_documents":
-            _LOGGER.debug("Skipping attribute %r of thoth-storages syncing module: solver already synced", obj_name)
-            continue
-
-        stats = function(force=force_sync, graceful=graceful, graph=graph)
-
-        _LOGGER.info(
-            "Syncing triggered by %r function completed with "
-            "%d processed, %d synced, %d skipped and %d failed documents",
-            obj_name,
-            *stats,
+    if _THOTH_METRICS_PUSHGATEWAY_URL:
+        _LOGGER.debug(f"Submitting metrics to Prometheus pushgateway {_THOTH_METRICS_PUSHGATEWAY_URL}")
+        push_to_gateway(
+            _THOTH_METRICS_PUSHGATEWAY_URL,
+            job="document-sync-job",
+            registry=prometheus_registry,
         )
 
 

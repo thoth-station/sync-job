@@ -16,6 +16,7 @@ mypy = "*"
 thoth-storages = "*"
 click = "*"
 thoth-common = "*"
+prometheus-client = "*"
 
 [requires]
 python_version = "3.8"
